@@ -35,6 +35,7 @@ export function ReceiptReviewPage() {
   const [payerId, setPayerId] = useState('')
   const [accountId, setAccountId] = useState('')
   const [items, setItems] = useState<ItemDraft[]>([])
+  const [bulkCategoryId, setBulkCategoryId] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -80,6 +81,10 @@ export function ReceiptReviewPage() {
 
   function applySplitToAll(split: SplitValue) {
     setItems((prev) => prev.map((i) => ({ ...i, split })))
+  }
+
+  function applyCategoryToAll() {
+    setItems((prev) => prev.map((i) => ({ ...i, categoryId: bulkCategoryId })))
   }
 
   async function handleSave() {
@@ -164,6 +169,30 @@ export function ReceiptReviewPage() {
               <option key={a.id} value={a.id}>{a.name}</option>
             ))}
           </select>
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-border bg-surface p-3">
+        <p className="mb-2 text-xs font-medium text-text-muted">Apply one category to every item</p>
+        <div className="flex gap-2">
+          <select
+            value={bulkCategoryId}
+            onChange={(e) => setBulkCategoryId(e.target.value)}
+            className="min-w-0 flex-1 rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm text-text focus:border-accent focus:outline-none"
+          >
+            <option value="">Uncategorized</option>
+            {categories?.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={applyCategoryToAll}
+            disabled={items.length === 0}
+            className="shrink-0 rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-bg disabled:opacity-50"
+          >
+            Apply to all
+          </button>
         </div>
       </div>
 
