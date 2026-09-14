@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-14T00:00:00Z",
+  "title": "Design System: Our Budget",
+  "extensions": {
+    "colorMeta": {
+      "dusk-lavender": { "role": "primary", "displayName": "Dusk Lavender", "canonical": "#b8a1ff", "tonalRamp": ["#1b0f3d", "#321d72", "#4729a3", "#5f3bce", "#876cda", "#af9de7", "#d7cef3", "#eeebfa"] },
+      "clear-sky-blue": { "role": "secondary", "displayName": "Clear Sky Blue", "canonical": "#6fb8ff", "tonalRamp": ["#0f273d", "#1d4872", "#2967a3", "#3b86ce", "#6ca4da", "#9dc2e7", "#cee1f3", "#ebf2fa"] },
+      "soft-blossom-pink": { "role": "secondary", "displayName": "Soft Blossom Pink", "canonical": "#f78fc2", "tonalRamp": ["#3a1226", "#6d2247", "#9b3165", "#c44583", "#d373a2", "#e2a2c1", "#f0d0e0", "#f9ecf2"] },
+      "peach-coral": { "role": "tertiary", "displayName": "Peach Coral", "canonical": "#ff8a7a", "tonalRamp": ["#3d150f", "#72271d", "#a33829", "#ce4d3b", "#da796c", "#e7a69d", "#f3d2ce", "#faeceb"] },
+      "honey-mustard": { "role": "tertiary", "displayName": "Honey Mustard", "canonical": "#f5c563", "tonalRamp": ["#3a2d12", "#6d5422", "#9c7830", "#c59b44", "#d4b473", "#e2cda2", "#f1e6d0", "#f9f5ec"] },
+      "mint-teal": { "role": "tertiary", "displayName": "Mint Teal", "canonical": "#5fe0c4", "tonalRamp": ["#17362f", "#2a6458", "#3d8f7d", "#53b6a1", "#7ec8b8", "#a9dbd0", "#d4ede7", "#edf7f5"] },
+      "soft-sage": { "role": "tertiary", "displayName": "Soft Sage", "canonical": "#a8d88a", "tonalRamp": ["#24321b", "#425d32", "#5f8547", "#7ca960", "#9dbf88", "#bed4af", "#deead7", "#f1f6ee"] },
+      "warm-coral-red": { "role": "semantic-danger", "displayName": "Warm Coral Red", "canonical": "#ff6b6b", "tonalRamp": ["#3d0f0f", "#721d1d", "#a32929", "#ce3b3b", "#da6c6c", "#e79d9d", "#f3cece", "#faebeb"] },
+      "ink-black": { "role": "neutral-bg", "displayName": "Ink Black", "canonical": "#0e0d12", "tonalRamp": [] },
+      "charcoal-panel": { "role": "neutral-surface", "displayName": "Charcoal Panel", "canonical": "#17151d", "tonalRamp": [] },
+      "raised-charcoal": { "role": "neutral-surface-raised", "displayName": "Raised Charcoal", "canonical": "#201d29", "tonalRamp": [] },
+      "soft-graphite": { "role": "neutral-border", "displayName": "Soft Graphite", "canonical": "#2a2733", "tonalRamp": [] },
+      "warm-white": { "role": "neutral-text", "displayName": "Warm White", "canonical": "#f3f1f6", "tonalRamp": ["#25212c", "#453d52", "#635775", "#817297", "#a095b1", "#c0b9cb", "#dfdce5", "#f2f0f4"] },
+      "dusty-mauve-grey": { "role": "neutral-text-muted", "displayName": "Dusty Mauve Grey", "canonical": "#9891a3", "tonalRamp": ["#25212c", "#453d52", "#635775", "#817297", "#a095b1", "#c0b9cb", "#dfdce5", "#f2f0f4"] }
+    },
+    "typographyMeta": {
+      "body": { "displayName": "Body / UI", "purpose": "All UI chrome: labels, buttons, list rows, form fields, nav." },
+      "money": { "displayName": "Money", "purpose": "Every rendered currency amount, exclusively. Tabular numerals via font-variant-numeric." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "press-scale", "value": "active:scale-[0.98], no easing token defined (CSS default)", "purpose": "Tactile press feedback on primary buttons in place of a hover/shadow shift." }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one confident-accent action per screen (Save, Sign in, Settle up).",
+      "html": "<button class=\"ds-btn-primary\">Save</button>",
+      "css": ".ds-btn-primary { background: #b8a1ff; color: #0e0d12; font-weight: 500; padding: 12px 16px; border-radius: 12px; border: none; transition: transform 0.15s; } .ds-btn-primary:hover { filter: brightness(1.05); } .ds-btn-primary:focus-visible { outline: 2px solid #b8a1ff; outline-offset: 2px; } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:disabled { opacity: 0.5; }"
+    },
+    {
+      "name": "Category Badge",
+      "kind": "custom",
+      "refersTo": "category-badge",
+      "description": "The signature component: a rounded icon circle in the category's own accent color, tinted background. Leads every transaction row, chip, and chart legend.",
+      "html": "<span class=\"ds-badge\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"21\" r=\"1\"/><circle cx=\"20\" cy=\"21\" r=\"1\"/><path d=\"M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6\"/></svg></span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 9999px; background: color-mix(in srgb, #5fe0c4 15%, transparent); color: #5fe0c4; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Standard list-row and container surface throughout the app.",
+      "html": "<div class=\"ds-card\">Content</div>",
+      "css": ".ds-card { background: #17151d; border: 1px solid #2a2733; border-radius: 12px; padding: 12px; color: #f3f1f6; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard form field.",
+      "html": "<input class=\"ds-input\" placeholder=\"Email\" />",
+      "css": ".ds-input { background: #17151d; border: 1px solid #2a2733; border-radius: 12px; padding: 12px 16px; color: #f3f1f6; width: 100%; } .ds-input::placeholder { color: #9891a3; } .ds-input:focus-visible { outline: 2px solid #b8a1ff; outline-offset: 2px; border-color: #b8a1ff; }"
+    },
+    {
+      "name": "Money Amount",
+      "kind": "custom",
+      "refersTo": "money-text",
+      "description": "Every rendered currency figure, from the Quick Add hero number down to a list-row amount.",
+      "html": "<span class=\"ds-money\">€24.50</span>",
+      "css": ".ds-money { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-weight: 600; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Category filter pill (transaction list) and split-scope toggle.",
+      "html": "<button class=\"ds-chip ds-chip-selected\">Groceries</button>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #2a2733; border-radius: 9999px; padding: 4px 12px; font-size: 14px; color: #9891a3; background: transparent; } .ds-chip-selected { border-color: #b8a1ff; background: color-mix(in srgb, #b8a1ff 15%, transparent); color: #b8a1ff; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Late-Night Ledger",
+    "overview": "Logging a purchase standing in the kitchen at 11pm, phone screen the only light on — a near-black surface with small, warm-colored badges glowing against it. The system inherits its character from the Crylia AwesomeWM rice (github.com/Crylia/crylia-theme): a dark, borderless, hacker-desktop base carrying small rounded pill badges in a restrained mix of soft-saturated colors, never one dominant hue. The \"cute\" register comes from color variety and rounded warmth in small details, not from pastel washes or heavy decoration — this stays a serious two-person finance tool wearing a cozy coat. Money itself is set in a tabular monospace face (JetBrains Mono, the reference's own font) — data, not a technical costume — while every other surface uses the system UI stack, keeping the interface quiet so the small color badges (category icons, split indicators, the balance figure) are what catch the eye.",
+    "keyCharacteristics": [
+      "Dark-only, near-black base — no light theme",
+      "One primary accent (Dusk Lavender) carries buttons and active states; a curated set of 6-8 secondary/tertiary hues carries category and person badges",
+      "Flat and borderless by default — depth comes from subtle background-tint separation, not shadows",
+      "Rounded-full badges for every category/goal icon and every person indicator",
+      "Tabular monospace exclusively for money figures"
+    ],
+    "rules": [
+      { "name": "The One Confident Accent Rule", "body": "Dusk Lavender is the only color that ever fills a large interactive element (a primary button, an active tab). Every other hue in the palette is reserved for small badges — a 32-40px icon circle, a 2.5px dot, a chip — never a button or a card background.", "section": "colors" },
+      { "name": "The Money-Is-Mono Rule", "body": "Every rendered currency amount, anywhere in the app, is set in the money face with font-variant-numeric: tabular-nums. No amount is ever set in the body face.", "section": "typography" },
+      { "name": "The No-Shadow Rule", "body": "Nothing in this system casts a box-shadow. A raised surface is one step lighter in the bg→surface→surface-raised scale, never a drop shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do reserve Dusk Lavender for the single primary action per screen; everything else uses the neutral or badge palette.",
+      "Do set every money figure in the tabular money face, no exceptions.",
+      "Do draw every category/goal/status icon from lucide-react (or an equivalent real icon library) at a consistent 2px stroke weight.",
+      "Do theme browser-native surfaces (selection, focus ring, scrollbar) from the palette rather than leaving OS defaults."
+    ],
+    "donts": [
+      "Don't use emoji as a stand-in for an icon anywhere in the product UI (category/goal icons, status indicators). A small celebratory emoji in a one-off success message's copy is the one accepted exception (\"All settled up\" 🎉-style moments) — even there, prefer a real drawn icon when one fits (see PartyPopper).",
+      "Don't introduce a shadow, gradient, or glass/blur effect as decoration. Depth comes from the bg/surface/surface-raised tint scale only.",
+      "Don't let Soft Blossom Pink (or pink generally) dominate a screen — it is one of eight badge hues in rotation, never the app's signature color. Dusk Lavender is.",
+      "Don't add a light theme. The system is dark-only by deliberate choice, matching the pinned reference."
+    ]
+  }
+}
