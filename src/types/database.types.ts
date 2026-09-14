@@ -71,7 +71,6 @@ export interface Database {
           name: string
           icon: string
           color: string
-          monthly_budget: number | null
           is_archived: boolean
           sort_order: number
           created_at: string
@@ -84,6 +83,38 @@ export interface Database {
         }
         Update: Partial<Database['public']['Tables']['categories']['Row']>
         Relationships: []
+      }
+      budgets: {
+        Row: {
+          id: string
+          household_id: string
+          category_id: string
+          profile_id: string | null
+          amount: number
+          created_at: string
+        }
+        Insert: Partial<Database['public']['Tables']['budgets']['Row']> & {
+          household_id: string
+          category_id: string
+          amount: number
+        }
+        Update: Partial<Database['public']['Tables']['budgets']['Row']>
+        Relationships: [
+          {
+            foreignKeyName: 'budgets_category_id_fkey'
+            columns: ['category_id']
+            isOneToOne: false
+            referencedRelation: 'categories'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'budgets_profile_id_fkey'
+            columns: ['profile_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
       }
       receipts: {
         Row: {

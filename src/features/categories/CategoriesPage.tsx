@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { ChevronLeft, Plus } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useCategories, useSaveCategory, useArchiveCategory, type Category } from './useCategories'
 import { useProfiles } from '../auth/useProfiles'
 import { Modal } from '../../components/Modal'
-import { formatMoney } from '../../lib/format'
 
 const COLOR_OPTIONS = ['#4fd1a5', '#ffb454', '#5b9bff', '#ff7ab8', '#f6c945', '#c792ea', '#7fdbff', '#ff6b6b', '#93a1b0']
 const EMOJI_OPTIONS = ['🛒', '🍔', '🚗', '🏠', '💡', '🛍️', '🎬', '💊', '✈️', '🐾', '📚', '📦']
@@ -28,7 +27,10 @@ export function CategoriesPage() {
         </button>
       </div>
 
-      <h1 className="text-lg font-semibold text-text">Categories</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold text-text">Categories</h1>
+        <Link to="/budgets" className="text-xs text-accent">Manage budgets →</Link>
+      </div>
 
       {isLoading && <p className="text-sm text-text-muted">Loading…</p>}
 
@@ -47,9 +49,6 @@ export function CategoriesPage() {
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-medium text-text">{c.name}</span>
-            </span>
-            <span className="shrink-0 text-xs text-text-muted">
-              {c.monthly_budget ? `${formatMoney(c.monthly_budget)}/mo` : 'No budget'}
             </span>
           </button>
         ))}
@@ -90,7 +89,6 @@ function CategoryEditor({
   const [name, setName] = useState(existing?.name ?? '')
   const [icon, setIcon] = useState(existing?.icon ?? EMOJI_OPTIONS[0])
   const [color, setColor] = useState(existing?.color ?? COLOR_OPTIONS[0])
-  const [budget, setBudget] = useState(existing?.monthly_budget?.toString() ?? '')
 
   if (!category) return null
 
@@ -130,14 +128,6 @@ function CategoryEditor({
           ))}
         </div>
 
-        <input
-          type="number"
-          placeholder="Monthly budget (optional)"
-          value={budget}
-          onChange={(e) => setBudget(e.target.value)}
-          className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-text focus:border-accent focus:outline-none"
-        />
-
         <button
           disabled={!name || !householdId}
           onClick={() =>
@@ -147,7 +137,6 @@ function CategoryEditor({
               name,
               icon,
               color,
-              monthly_budget: budget ? Number(budget) : null,
             })
           }
           className="w-full rounded-xl bg-accent px-4 py-3 font-medium text-bg disabled:opacity-50"

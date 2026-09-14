@@ -1,15 +1,17 @@
 import { Link } from 'react-router-dom'
 import { useCategories } from '../categories/useCategories'
 import { useCategorySpend } from '../budgets/useBudgetProgress'
+import { useBudgets } from '../budgets/useBudgets'
 import { ProgressBar } from '../../components/ProgressBar'
 import { formatMoney } from '../../lib/format'
 
 export function BudgetProgressList() {
   const { data: categories } = useCategories()
+  const { data: budgets } = useBudgets()
   const { data: spend } = useCategorySpend()
 
-  const budgeted = (categories ?? []).filter((c) => c.monthly_budget).slice(0, 4)
-  if (budgeted.length === 0) return null
+  const sharedBudgets = (budgets ?? []).filter((b) => !b.profile_id).slice(0, 4)
+  if (sharedBudgets.length === 0) return null
 
   return (
     <div>
@@ -18,16 +20,17 @@ export function BudgetProgressList() {
         <Link to="/budgets" className="text-xs text-accent">See all</Link>
       </div>
       <div className="space-y-2">
-        {budgeted.map((c) => {
-          const spent = spend?.[c.id] ?? 0
-          const budget = c.monthly_budget ?? 0
+        {sharedBudgets.map((b) => {
+          const category = categories?.find((c) => c.id === b.category_id)
+          if (!category) return null
+          const spent = spend?.[b.category_id]?.shared ?? 0
           return (
-            <div key={c.id} className="rounded-xl border border-border bg-surface p-3">
+            <div key={b.id} className="rounded-xl border border-border bg-surface p-3">
               <div className="mb-1.5 flex items-center justify-between text-xs">
-                <span className="text-text">{c.icon} {c.name}</span>
-                <span className="text-text-muted">{formatMoney(spent)} / {formatMoney(budget)}</span>
+                <span className="text-text">{category.icon} {category.name}</span>
+                <span className="text-text-muted">{formatMoney(spent)} / {formatMoney(b.amount)}</span>
               </div>
-              <ProgressBar ratio={budget > 0 ? spent / budget : 0} color={c.color} />
+              <ProgressBar ratio={b.amount > 0 ? spent / b.amount : 0} color={category.color} />
             </div>
           )
         })}
