@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import { ChevronLeft, Trash2 } from 'lucide-react'
 import { useCategories } from '../categories/useCategories'
 import { useAccounts } from '../accounts/useAccounts'
@@ -103,6 +103,15 @@ export function TransactionFormPage() {
 
       <h1 className="text-lg font-semibold text-text">{existing ? 'Edit Transaction' : 'New Transaction'}</h1>
 
+      {accounts && accounts.length === 0 && (
+        <Link
+          to="/accounts"
+          className="block rounded-xl border border-accent/40 bg-accent/10 p-3 text-sm text-accent"
+        >
+          You don't have any accounts yet — tap to add one (e.g. a shared card or cash) before saving a transaction.
+        </Link>
+      )}
+
       <div>
         <label className="mb-1 block text-xs text-text-muted">Amount</label>
         <input
@@ -142,8 +151,10 @@ export function TransactionFormPage() {
           <select
             value={accountId}
             onChange={(e) => setAccountId(e.target.value)}
-            className="w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-text focus:border-accent focus:outline-none"
+            disabled={!accounts?.length}
+            className="w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-text focus:border-accent focus:outline-none disabled:opacity-50"
           >
+            {!accounts?.length && <option value="">No accounts yet</option>}
             {accounts?.map((a) => (
               <option key={a.id} value={a.id}>{a.name}</option>
             ))}

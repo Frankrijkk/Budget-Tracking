@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { X, Check } from 'lucide-react'
 import { Keypad } from '../../components/Keypad'
 import { useCategories } from '../categories/useCategories'
@@ -79,9 +79,18 @@ export function QuickAddPage() {
       </div>
 
       <div className="flex flex-1 flex-col justify-center gap-6 py-6">
+        {accounts && accounts.length === 0 && (
+          <Link
+            to="/accounts"
+            className="rounded-xl border border-accent/40 bg-accent/10 p-3 text-center text-sm text-accent"
+          >
+            You need at least one account before you can save a transaction — tap to add one
+          </Link>
+        )}
+
         <div className="text-center">
           <span className="text-5xl font-semibold text-text">
-            {amount ? formatMoney(amountNum) : <span className="text-text-muted">$0.00</span>}
+            {amount ? formatMoney(amountNum) : <span className="text-text-muted">{formatMoney(0)}</span>}
           </span>
         </div>
 

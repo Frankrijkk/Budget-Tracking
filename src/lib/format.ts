@@ -1,4 +1,4 @@
-export function formatMoney(amount: number, currency = 'USD') {
+export function formatMoney(amount: number, currency = 'EUR') {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount)
 }
 

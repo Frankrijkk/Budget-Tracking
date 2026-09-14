@@ -7,6 +7,10 @@ insert into households (id, name)
 values ('00000000-0000-0000-0000-000000000001', 'Our Household')
 on conflict (id) do nothing;
 
+insert into accounts (id, household_id, name, type, icon)
+values ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'Shared Card', 'card', '💳')
+on conflict (id) do nothing;
+
 insert into categories (household_id, name, icon, color, monthly_budget, sort_order)
 values
   ('00000000-0000-0000-0000-000000000001', 'Groceries', '🛒', '#4fd1a5', 500, 1),
