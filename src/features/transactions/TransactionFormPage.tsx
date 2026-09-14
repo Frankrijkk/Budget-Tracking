@@ -205,6 +205,7 @@ export function TransactionFormPage() {
           onChange={setSplit}
           meName={profiles.me.display_name}
           herName={profiles.partner.display_name}
+          amount={Number(amount) || 0}
         />
       </div>
 

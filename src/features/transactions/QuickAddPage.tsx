@@ -45,8 +45,9 @@ export function QuickAddPage() {
     if (!canSave || !profiles?.me || !profiles.partner || !accounts?.length) return
 
     const category = categories?.find((c) => c.id === categoryId)
-    // Quick Add always uses the household's default 50/50 shared split;
-    // fine-tune the split later from the full transaction editor if needed.
+    // Quick Add is for personal, on-the-spot purchases -- whoever paid gets
+    // the full amount on their own budget. Use the full transaction editor
+    // to split something between the two of you.
     await saveTransaction.mutateAsync({
       household_id: profiles.me.household_id,
       account_id: accounts[0].id,
@@ -57,8 +58,7 @@ export function QuickAddPage() {
       occurred_on: new Date().toISOString().slice(0, 10),
       created_by: profiles.me.id,
       shares: [
-        { profile_id: profiles.me.id, share_type: 'shared', ratio: 0.5 },
-        { profile_id: profiles.partner.id, share_type: 'shared', ratio: 0.5 },
+        { profile_id: payerId, share_type: payerId === profiles.me.id ? 'me' : 'her', ratio: 1 },
       ],
     })
 
