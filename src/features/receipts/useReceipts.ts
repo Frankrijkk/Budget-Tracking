@@ -30,6 +30,23 @@ export function useReceipt(id: string | undefined) {
   })
 }
 
+/** supabase-js's invoke() error only carries a generic "non-2xx status
+ * code" message by default -- the actual reason is in the response body,
+ * reachable via the error's `context` (the raw Response). Surface that
+ * instead so failures are diagnosable from the UI. */
+async function extractFunctionErrorMessage(invokeError: unknown): Promise<string> {
+  const context = (invokeError as { context?: Response }).context
+  if (context && typeof context.json === 'function') {
+    try {
+      const body = await context.clone().json()
+      if (typeof body?.error === 'string') return body.error
+    } catch {
+      // response body wasn't JSON -- fall through to the generic message
+    }
+  }
+  return invokeError instanceof Error ? invokeError.message : String(invokeError)
+}
+
 export function useUploadReceipt() {
   const { data: profiles } = useProfiles()
 
@@ -50,7 +67,7 @@ export function useUploadReceipt() {
         parsed: ParsedReceipt
       }>('parse-receipt', { body: { storagePath: path } })
 
-      if (invokeError) throw invokeError
+      if (invokeError) throw new Error(await extractFunctionErrorMessage(invokeError))
       if (!data) throw new Error('No response from receipt parser')
       return data
     },
