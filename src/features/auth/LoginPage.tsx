@@ -1,7 +1,10 @@
 import { useState, type FormEvent } from 'react'
+import { Navigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { useSession } from './useSession'
 
 export function LoginPage() {
+  const { session, loading } = useSession()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -14,6 +17,12 @@ export function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     setSubmitting(false)
     if (error) setError(error.message)
+  }
+
+  // signInWithPassword only updates the Supabase client's session -- nothing
+  // else on this page would otherwise ever navigate away from /login.
+  if (!loading && session) {
+    return <Navigate to="/" replace />
   }
 
   return (
