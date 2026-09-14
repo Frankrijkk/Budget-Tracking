@@ -8,10 +8,12 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const NVIDIA_API_KEY = Deno.env.get('NVIDIA_API_KEY')!
-// Nemotron Nano VL is purpose-built for document/receipt data extraction
-// (line items, totals, dates) -- see
-// https://developer.nvidia.com/blog/new-nvidia-llama-nemotron-nano-vision-language-model-tops-ocr-benchmark-for-accuracy/
-const MODEL = 'nvidia/llama-3.1-nemotron-nano-vl-8b-v1'
+// A general vision-instruct model via NVIDIA's NIM catalog. The
+// receipt-specialized Nemotron VL models reached end-of-life and were
+// removed from the API (checked live against GET /v1/models on
+// integrate.api.nvidia.com) -- if this one is ever retired too, re-check
+// that endpoint for what's currently live before picking a replacement.
+const MODEL = 'meta/llama-3.2-11b-vision-instruct'
 
 interface ParsedReceipt {
   store: string
@@ -54,7 +56,21 @@ function isParsedReceipt(value: unknown): value is ParsedReceipt {
   )
 }
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+
 Deno.serve(async (req) => {
+  // The browser's CORS preflight (OPTIONS) carries no Authorization header
+  // and must be answered before any auth check, or the browser blocks the
+  // real request and supabase-js surfaces it as "Failed to send a request
+  // to the Edge Function" with no further detail.
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: CORS_HEADERS })
+  }
+
   try {
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) return json({ error: 'Unauthorized' }, 401)
@@ -154,5 +170,8 @@ Deno.serve(async (req) => {
 })
 
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+  })
 }

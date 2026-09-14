@@ -66,7 +66,19 @@ function advanceDate(rule: RecurringRule): string {
   return next.toISOString().slice(0, 10)
 }
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+
 Deno.serve(async (req) => {
+  // Preflight for the "Run now" button's browser call; pg_cron's server-side
+  // call never sends OPTIONS, so this only matters for the browser path.
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: CORS_HEADERS })
+  }
+
   const cronSecret = req.headers.get('x-cron-secret')
   const authHeader = req.headers.get('Authorization')
 
@@ -82,7 +94,7 @@ Deno.serve(async (req) => {
   }
 
   if (!isCron && !isAuthedUser) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: CORS_HEADERS })
   }
 
   const today = new Date().toISOString().slice(0, 10)
@@ -94,7 +106,7 @@ Deno.serve(async (req) => {
     .lte('next_run_date', today)
 
   if (fetchError) {
-    return new Response(JSON.stringify({ error: fetchError.message }), { status: 500 })
+    return new Response(JSON.stringify({ error: fetchError.message }), { status: 500, headers: CORS_HEADERS })
   }
 
   const results: { id: string; created: boolean; error?: string }[] = []
@@ -153,6 +165,6 @@ Deno.serve(async (req) => {
   }
 
   return new Response(JSON.stringify({ processed: results.length, results }), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
   })
 })
