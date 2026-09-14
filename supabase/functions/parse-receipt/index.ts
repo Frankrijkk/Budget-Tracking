@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
     if (downloadError || !imageBlob) return json({ error: 'Could not read uploaded image' }, 400)
 
     const mediaType = imageBlob.type || 'image/jpeg'
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(await imageBlob.arrayBuffer())))
+    const base64 = uint8ToBase64(new Uint8Array(await imageBlob.arrayBuffer()))
 
     const aiResponse = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
       method: 'POST',
@@ -168,6 +168,20 @@ Deno.serve(async (req) => {
     return json({ error: e instanceof Error ? e.message : String(e) }, 500)
   }
 })
+
+/** String.fromCharCode(...bytes) spreads every byte as a separate function
+ * argument -- fine for the ~6KB test image this was verified against, but
+ * a real phone photo (a few hundred KB to a few MB even after client-side
+ * compression) blows the engine's argument-count limit and throws
+ * "Maximum call stack size exceeded". Chunking keeps each call small. */
+function uint8ToBase64(bytes: Uint8Array): string {
+  let binary = ''
+  const chunkSize = 8192
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize))
+  }
+  return btoa(binary)
+}
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
