@@ -16,7 +16,16 @@ export function CategoryPieChart() {
       <div className="relative mx-auto h-56 w-56">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={slices} dataKey="amount" nameKey="name" innerRadius={65} outerRadius={95} paddingAngle={2} strokeWidth={0}>
+            <Pie
+              data={slices.map((s) => ({ ...s, fill: s.color }))}
+              dataKey="amount"
+              nameKey="name"
+              innerRadius={65}
+              outerRadius={95}
+              paddingAngle={2}
+              stroke="none"
+              isAnimationActive={false}
+            >
               {slices.map((s) => (
                 <Cell key={s.categoryId} fill={s.color} />
               ))}
