@@ -1,13 +1,15 @@
 -- Schedules the generate-recurring edge function to run daily.
 --
--- IMPORTANT: before this actually works you must:
---   1. Deploy the function: npx supabase functions deploy generate-recurring
---   2. Set its secret: npx supabase secrets set CRON_SHARED_SECRET=<a random string>
---   3. Replace YOUR_PROJECT_REF and YOUR_CRON_SHARED_SECRET below with the real
---      values, then re-run this migration (or run the cron.schedule call
---      directly in the Supabase SQL editor).
--- Until then this job safely no-ops (the URL 404s, the function is never
--- reached, next_run_date advances only when you use "Run now" in the app).
+-- NOTE: for this project, the real cron job was already applied directly
+-- against the database (via `supabase db query --linked`) with the actual
+-- project ref and CRON_SHARED_SECRET filled in -- NOT through this file, to
+-- avoid committing that secret to git. This file is kept as a template.
+--
+-- If you ever need to re-apply it (e.g. after rotating CRON_SHARED_SECRET
+-- via `supabase secrets set`), fill in YOUR_PROJECT_REF and
+-- YOUR_CRON_SHARED_SECRET below and run it with `supabase db query --linked
+-- --file <this file>` or paste it into the Supabase SQL editor -- don't
+-- commit the filled-in version.
 
 create extension if not exists pg_cron;
 create extension if not exists pg_net;

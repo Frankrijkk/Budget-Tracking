@@ -10,7 +10,7 @@ Not published anywhere. Just for the two of you.
 
 - Frontend: Vite + React + TypeScript + Tailwind CSS, installable as a PWA
 - Backend: [Supabase](https://supabase.com) (Postgres + Auth + Storage + Realtime + Edge Functions), free tier
-- Receipt AI: Anthropic Claude (vision), called from a Supabase Edge Function
+- Receipt AI: NVIDIA NIM hosted vision-language model, called from a Supabase Edge Function
 - Charts: Recharts
 
 ## One-time setup
@@ -40,10 +40,17 @@ npx supabase db push
 This creates all tables, RLS policies, views, and RPC functions from
 `supabase/migrations/`.
 
-### 4. Get an Anthropic API key
+### 4. Get an NVIDIA API key
 
-Sign up at [console.anthropic.com](https://console.anthropic.com) and create an
-API key. Cost is negligible at a few dozen receipt scans a month.
+Sign up at [build.nvidia.com](https://build.nvidia.com) and create an API key
+(top right → Get API Key). Receipt scanning calls
+`nvidia/llama-3.1-nemotron-nano-vl-8b-v1`, a vision-language model tuned for
+document/receipt data extraction, via NVIDIA's hosted NIM API.
+
+If a receipt scan ever fails with a 401/403 "Authorization failed" error even
+though the key looks right, your NVIDIA account may need "Public API
+Endpoints" enabled — check the API Keys page or NVIDIA's developer forums for
+that setting.
 
 ### 5. Deploy the edge functions and set secrets
 
@@ -51,18 +58,22 @@ API key. Cost is negligible at a few dozen receipt scans a month.
 npx supabase functions deploy parse-receipt
 npx supabase functions deploy generate-recurring
 
-npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
+npx supabase secrets set NVIDIA_API_KEY=nvapi-...
 npx supabase secrets set CRON_SHARED_SECRET=$(openssl rand -hex 24)
 ```
 
 ### 6. Wire up the daily recurring-transactions cron job (optional)
 
-Edit `supabase/migrations/20260914000300_pg_cron_recurring.sql`, replacing
-`YOUR_PROJECT_REF` and `YOUR_CRON_SHARED_SECRET` with your real project ref and
-the `CRON_SHARED_SECRET` you just set, then:
+`supabase/migrations/20260914000300_pg_cron_recurring.sql` was already applied
+as a migration once with placeholder values, so `supabase db push` won't
+re-run it even after editing it (Supabase tracks migrations as applied by
+filename, not by diffing content). Instead, fill in a **copy** of it locally
+with your real project ref and `CRON_SHARED_SECRET` — never commit that
+filled-in version, since it's a real secret — and run it directly against the
+linked project:
 
 ```bash
-npx supabase db push
+npx supabase db query --linked --file <path-to-your-filled-in-copy.sql>
 ```
 
 Until you do this, recurring transactions just won't auto-generate daily —

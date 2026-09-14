@@ -1,13 +1,17 @@
-// Downloads a receipt photo from Storage, sends it to Claude's vision API
-// with a forced tool-call schema so the response is always well-formed
-// JSON, and stores a draft `receipts` row the client then reviews/edits.
+// Downloads a receipt photo from Storage, sends it to an NVIDIA-hosted
+// vision-language model (via the NIM API at integrate.api.nvidia.com,
+// OpenAI-compatible chat completions) with a JSON-only prompt, and stores
+// a draft `receipts` row the client then reviews/edits.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY')!
-const MODEL = 'claude-haiku-4-5-20251001'
+const NVIDIA_API_KEY = Deno.env.get('NVIDIA_API_KEY')!
+// Nemotron Nano VL is purpose-built for document/receipt data extraction
+// (line items, totals, dates) -- see
+// https://developer.nvidia.com/blog/new-nvidia-llama-nemotron-nano-vision-language-model-tops-ocr-benchmark-for-accuracy/
+const MODEL = 'nvidia/llama-3.1-nemotron-nano-vl-8b-v1'
 
 interface ParsedReceipt {
   store: string
@@ -16,29 +20,24 @@ interface ParsedReceipt {
   total: number
 }
 
-const RECORD_RECEIPT_TOOL = {
-  name: 'record_receipt',
-  description: 'Records the structured contents of a store receipt photo.',
-  input_schema: {
-    type: 'object',
-    properties: {
-      store: { type: 'string', description: 'Store/merchant name as printed on the receipt' },
-      date: { type: 'string', description: 'Purchase date in ISO 8601 (YYYY-MM-DD). Best guess if unclear.' },
-      items: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            name: { type: 'string' },
-            price: { type: 'number' },
-          },
-          required: ['name', 'price'],
-        },
-      },
-      total: { type: 'number', description: 'The total amount charged, as printed on the receipt' },
-    },
-    required: ['store', 'date', 'items', 'total'],
-  },
+const EXTRACTION_PROMPT = `Extract this store receipt into JSON. Respond with ONLY the JSON object, no markdown fences, no other text.
+
+Schema:
+{
+  "store": string (store/merchant name as printed on the receipt),
+  "date": string (purchase date in ISO 8601 YYYY-MM-DD, best guess if unclear),
+  "items": [ { "name": string, "price": number } ] (every line item and its price),
+  "total": number (the total amount charged, as printed on the receipt)
+}`
+
+/** Models occasionally wrap JSON in prose or markdown fences despite instructions -- pull out the object. */
+function extractJson(text: string): unknown {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i)
+  const candidate = fenced ? fenced[1] : text
+  const start = candidate.indexOf('{')
+  const end = candidate.lastIndexOf('}')
+  if (start === -1 || end === -1) throw new Error('No JSON object found in model response')
+  return JSON.parse(candidate.slice(start, end + 1))
 }
 
 function isParsedReceipt(value: unknown): value is ParsedReceipt {
@@ -84,27 +83,22 @@ Deno.serve(async (req) => {
     const mediaType = imageBlob.type || 'image/jpeg'
     const base64 = btoa(String.fromCharCode(...new Uint8Array(await imageBlob.arrayBuffer())))
 
-    const aiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+    const aiResponse = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
+        authorization: `Bearer ${NVIDIA_API_KEY}`,
       },
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 2048,
-        tools: [RECORD_RECEIPT_TOOL],
-        tool_choice: { type: 'tool', name: 'record_receipt' },
+        temperature: 0.1,
         messages: [
           {
             role: 'user',
             content: [
-              { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
-              {
-                type: 'text',
-                text: 'Extract every line item and its price from this store receipt, plus the store name, purchase date, and total. Use the record_receipt tool.',
-              },
+              { type: 'text', text: EXTRACTION_PROMPT },
+              { type: 'image_url', image_url: { url: `data:${mediaType};base64,${base64}` } },
             ],
           },
         ],
@@ -113,16 +107,27 @@ Deno.serve(async (req) => {
 
     if (!aiResponse.ok) {
       const errText = await aiResponse.text()
-      return json({ error: `Claude API error: ${errText}` }, 502)
+      return json({ error: `NVIDIA API error: ${errText}` }, 502)
     }
 
     const aiJson = await aiResponse.json()
-    const toolUse = aiJson.content?.find((block: any) => block.type === 'tool_use')
-    if (!toolUse || !isParsedReceipt(toolUse.input)) {
+    const content = aiJson.choices?.[0]?.message?.content
+    if (typeof content !== 'string') {
+      return json({ error: 'No response content from the model' }, 502)
+    }
+
+    let candidate: unknown
+    try {
+      candidate = extractJson(content)
+    } catch {
       return json({ error: 'Could not extract a valid receipt from that photo. Try a clearer photo or enter it manually.' }, 422)
     }
 
-    const parsed = toolUse.input as ParsedReceipt
+    if (!isParsedReceipt(candidate)) {
+      return json({ error: 'Could not extract a valid receipt from that photo. Try a clearer photo or enter it manually.' }, 422)
+    }
+
+    const parsed = candidate
 
     const { data: receipt, error: insertError } = await admin
       .from('receipts')
