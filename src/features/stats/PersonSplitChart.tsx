@@ -23,14 +23,14 @@ export function PersonSplitChart() {
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--color-accent-me)' }} />
             {profiles.me.display_name}
           </p>
-          <p className="text-lg font-semibold text-text">{formatMoney(data.me)}</p>
+          <p className="money text-lg font-semibold text-text">{formatMoney(data.me)}</p>
         </div>
         <div className="text-right">
           <p className="flex items-center justify-end gap-1.5 text-sm text-text">
             {profiles.partner.display_name}
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: 'var(--color-accent-her)' }} />
           </p>
-          <p className="text-lg font-semibold text-text">{formatMoney(data.her)}</p>
+          <p className="money text-lg font-semibold text-text">{formatMoney(data.her)}</p>
         </div>
       </div>
     </div>

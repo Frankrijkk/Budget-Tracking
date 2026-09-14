@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTransactions } from '../transactions/useTransactions'
 import { formatMoney } from '../../lib/format'
+import { CategoryIcon } from '../../lib/categoryIcons'
 import { format, parseISO } from 'date-fns'
 
 export function RecentTransactionsList() {
@@ -23,10 +24,10 @@ export function RecentTransactionsList() {
         {transactions?.map((t) => (
           <Link key={t.id} to={`/transactions/${t.id}/edit`} className="flex items-center gap-3 p-3 active:bg-surface-raised">
             <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base"
-              style={{ background: `${t.category?.color ?? '#93a1b0'}25` }}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+              style={{ background: `${t.category?.color ?? '#9891a3'}25`, color: t.category?.color ?? '#9891a3' }}
             >
-              {t.category?.icon ?? '📦'}
+              <CategoryIcon name={t.category?.icon ?? 'package'} />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-medium text-text">
@@ -34,7 +35,7 @@ export function RecentTransactionsList() {
               </span>
               <span className="block text-xs text-text-muted">{format(parseISO(t.occurred_on), 'MMM d')}</span>
             </span>
-            <span className="shrink-0 font-medium text-text">{formatMoney(t.amount, t.currency)}</span>
+            <span className="money shrink-0 font-semibold text-text">{formatMoney(t.amount, t.currency)}</span>
           </Link>
         ))}
       </div>

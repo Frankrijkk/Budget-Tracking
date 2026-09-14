@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, PartyPopper } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useBalance } from './useBalance'
 import { useProfiles } from '../auth/useProfiles'
@@ -63,13 +63,15 @@ export function SettleUpPage() {
 
       <div className="rounded-2xl border border-border bg-surface p-5 text-center">
         {settled || done ? (
-          <p className="text-xl font-semibold text-text">All settled up 🎉</p>
+          <p className="flex items-center justify-center gap-2 text-xl font-semibold text-text">
+            <PartyPopper size={20} className="text-accent" /> All settled up
+          </p>
         ) : (
           <>
             <p className="text-sm text-text-muted">
               {owesMe ? `${profiles.partner.display_name} owes ${profiles.me.display_name}` : `${profiles.me.display_name} owes ${profiles.partner.display_name}`}
             </p>
-            <p className={`mt-1 text-3xl font-semibold ${owesMe ? 'text-accent' : 'text-danger'}`}>
+            <p className={`money mt-1 text-3xl font-semibold ${owesMe ? 'text-accent' : 'text-danger'}`}>
               {formatMoney(Math.abs(balance.meNet))}
             </p>
           </>
@@ -85,7 +87,7 @@ export function SettleUpPage() {
             step="0.01"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-text focus:border-accent focus:outline-none"
+            className="money w-full rounded-xl border border-border bg-bg px-4 py-2.5 text-text focus:border-accent focus:outline-none"
           />
           <select
             value={accountId}

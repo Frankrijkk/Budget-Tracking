@@ -41,7 +41,7 @@ export function useCategoryBreakdown(monthDate = new Date()) {
             categoryId,
             name: cat?.name ?? 'Uncategorized',
             color: cat?.color ?? '#93a1b0',
-            icon: cat?.icon ?? '📦',
+            icon: cat?.icon ?? 'package',
             amount,
           }
         })

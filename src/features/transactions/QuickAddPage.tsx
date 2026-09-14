@@ -7,6 +7,7 @@ import { useAccounts } from '../accounts/useAccounts'
 import { useProfiles } from '../auth/useProfiles'
 import { useSaveTransaction } from './useTransactions'
 import { formatMoney } from '../../lib/format'
+import { CategoryIcon } from '../../lib/categoryIcons'
 
 export function QuickAddPage() {
   const navigate = useNavigate()
@@ -89,7 +90,7 @@ export function QuickAddPage() {
         )}
 
         <div className="text-center">
-          <span className="text-5xl font-semibold text-text">
+          <span className="money text-5xl font-semibold text-text">
             {amount ? formatMoney(amountNum) : <span className="text-text-muted">{formatMoney(0)}</span>}
           </span>
         </div>
@@ -100,11 +101,14 @@ export function QuickAddPage() {
               key={c.id}
               type="button"
               onClick={() => setCategoryId(c.id)}
-              className={`flex h-14 w-14 flex-col items-center justify-center rounded-2xl border text-xl ${
-                categoryId === c.id ? 'border-accent bg-accent/15' : 'border-border bg-surface'
-              }`}
+              className="flex h-14 w-14 flex-col items-center justify-center rounded-2xl border-2 transition"
+              style={
+                categoryId === c.id
+                  ? { borderColor: c.color, background: `${c.color}25`, color: c.color }
+                  : { borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }
+              }
             >
-              {c.icon}
+              <CategoryIcon name={c.icon} size={22} />
             </button>
           ))}
         </div>

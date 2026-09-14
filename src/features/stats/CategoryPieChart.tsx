@@ -1,6 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useCategoryBreakdown } from './useStats'
 import { formatMoney } from '../../lib/format'
+import { CategoryIcon } from '../../lib/categoryIcons'
 
 export function CategoryPieChart() {
   const { data: slices } = useCategoryBreakdown()
@@ -29,16 +30,18 @@ export function CategoryPieChart() {
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-xs text-text-muted">Total</span>
-          <span className="text-lg font-semibold text-text">{formatMoney(total)}</span>
+          <span className="money text-lg font-semibold text-text">{formatMoney(total)}</span>
         </div>
       </div>
 
       <div className="mt-4 space-y-1.5">
         {slices.map((s) => (
           <div key={s.categoryId} className="flex items-center gap-2 text-sm">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: s.color }} />
-            <span className="flex-1 truncate text-text">{s.icon} {s.name}</span>
-            <span className="text-text-muted">{formatMoney(s.amount)}</span>
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full" style={{ background: `${s.color}25`, color: s.color }}>
+              <CategoryIcon name={s.icon} size={13} />
+            </span>
+            <span className="flex-1 truncate text-text">{s.name}</span>
+            <span className="money text-text-muted">{formatMoney(s.amount)}</span>
           </div>
         ))}
       </div>

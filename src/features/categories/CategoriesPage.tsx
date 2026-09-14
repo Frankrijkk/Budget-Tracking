@@ -4,9 +4,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useCategories, useSaveCategory, useArchiveCategory, type Category } from './useCategories'
 import { useProfiles } from '../auth/useProfiles'
 import { Modal } from '../../components/Modal'
-
-const COLOR_OPTIONS = ['#4fd1a5', '#ffb454', '#5b9bff', '#ff7ab8', '#f6c945', '#c792ea', '#7fdbff', '#ff6b6b', '#93a1b0']
-const EMOJI_OPTIONS = ['🛒', '🍔', '🚗', '🏠', '💡', '🛍️', '🎬', '💊', '✈️', '🐾', '📚', '📦']
+import { CategoryIcon, CATEGORY_ICON_OPTIONS, BADGE_COLOR_OPTIONS } from '../../lib/categoryIcons'
 
 export function CategoriesPage() {
   const navigate = useNavigate()
@@ -42,10 +40,10 @@ export function CategoriesPage() {
             className="flex w-full items-center gap-3 p-3 text-left active:bg-surface-raised"
           >
             <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base"
-              style={{ background: `${c.color}25` }}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+              style={{ background: `${c.color}25`, color: c.color }}
             >
-              {c.icon}
+              <CategoryIcon name={c.icon} />
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-medium text-text">{c.name}</span>
@@ -87,8 +85,8 @@ function CategoryEditor({
   const isNew = category === 'new'
   const existing = isNew ? null : category
   const [name, setName] = useState(existing?.name ?? '')
-  const [icon, setIcon] = useState(existing?.icon ?? EMOJI_OPTIONS[0])
-  const [color, setColor] = useState(existing?.color ?? COLOR_OPTIONS[0])
+  const [icon, setIcon] = useState(existing?.icon ?? CATEGORY_ICON_OPTIONS[0])
+  const [color, setColor] = useState(existing?.color ?? BADGE_COLOR_OPTIONS[0])
 
   if (!category) return null
 
@@ -104,26 +102,26 @@ function CategoryEditor({
         />
 
         <div className="flex flex-wrap gap-2">
-          {EMOJI_OPTIONS.map((e) => (
+          {CATEGORY_ICON_OPTIONS.map((name) => (
             <button
-              key={e}
-              onClick={() => setIcon(e)}
-              className={`flex h-10 w-10 items-center justify-center rounded-full border text-lg ${
-                icon === e ? 'border-accent bg-accent/15' : 'border-border'
+              key={name}
+              onClick={() => setIcon(name)}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border ${
+                icon === name ? 'border-accent bg-accent/15 text-accent' : 'border-border text-text-muted'
               }`}
             >
-              {e}
+              <CategoryIcon name={name} />
             </button>
           ))}
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {COLOR_OPTIONS.map((c) => (
+          {BADGE_COLOR_OPTIONS.map((c) => (
             <button
               key={c}
               onClick={() => setColor(c)}
               className="h-8 w-8 rounded-full border-2"
-              style={{ background: c, borderColor: color === c ? '#fff' : 'transparent' }}
+              style={{ background: c, borderColor: color === c ? 'var(--color-text)' : 'transparent' }}
             />
           ))}
         </div>

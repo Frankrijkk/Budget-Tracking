@@ -4,6 +4,7 @@ import { useCategorySpend } from '../budgets/useBudgetProgress'
 import { useBudgets } from '../budgets/useBudgets'
 import { ProgressBar } from '../../components/ProgressBar'
 import { formatMoney } from '../../lib/format'
+import { CategoryIcon } from '../../lib/categoryIcons'
 
 export function BudgetProgressList() {
   const { data: categories } = useCategories()
@@ -27,8 +28,10 @@ export function BudgetProgressList() {
           return (
             <div key={b.id} className="rounded-xl border border-border bg-surface p-3">
               <div className="mb-1.5 flex items-center justify-between text-xs">
-                <span className="text-text">{category.icon} {category.name}</span>
-                <span className="text-text-muted">{formatMoney(spent)} / {formatMoney(b.amount)}</span>
+                <span className="flex items-center gap-1.5 text-text">
+                  <CategoryIcon name={category.icon} size={14} /> {category.name}
+                </span>
+                <span className="money text-text-muted">{formatMoney(spent)} / {formatMoney(b.amount)}</span>
               </div>
               <ProgressBar ratio={b.amount > 0 ? spent / b.amount : 0} color={category.color} />
             </div>

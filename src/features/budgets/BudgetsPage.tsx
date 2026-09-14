@@ -8,6 +8,7 @@ import { useProfiles } from '../auth/useProfiles'
 import { Modal } from '../../components/Modal'
 import { ProgressBar } from '../../components/ProgressBar'
 import { formatMoney } from '../../lib/format'
+import { CategoryIcon } from '../../lib/categoryIcons'
 
 /** null = the shared/household scope; a string = that profile's personal scope. */
 type Scope = string | null
@@ -67,7 +68,7 @@ export function BudgetsPage() {
           return (
             <div key={c.id} className="rounded-xl border border-border bg-surface p-3">
               <p className="mb-2 flex items-center gap-2 text-sm font-medium text-text">
-                <span>{c.icon}</span> {c.name}
+                <span style={{ color: c.color }}><CategoryIcon name={c.icon} size={16} /></span> {c.name}
               </p>
 
               <div className="space-y-2.5">
@@ -93,7 +94,7 @@ export function BudgetsPage() {
                       <div className="mb-1 flex items-center justify-between text-xs">
                         <span className="text-text-muted">{label}</span>
                         {budget ? (
-                          <span className={ratio > 1 ? 'text-danger' : 'text-text-muted'}>
+                          <span className={`money ${ratio > 1 ? 'text-danger' : 'text-text-muted'}`}>
                             {formatMoney(spentAmount)} / {formatMoney(budget.amount)}
                           </span>
                         ) : (

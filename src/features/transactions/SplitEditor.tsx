@@ -165,7 +165,7 @@ function AmountSplitInputs({
             setMeText(e.target.value)
             onMeAmountChange(e.target.value)
           }}
-          className="w-full rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm text-text focus:border-accent focus:outline-none"
+          className="money w-full rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm text-text focus:border-accent focus:outline-none"
         />
       </div>
       <div className="flex-1">
@@ -182,7 +182,7 @@ function AmountSplitInputs({
             setHerText(e.target.value)
             onHerAmountChange(e.target.value)
           }}
-          className="w-full rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm text-text focus:border-accent focus:outline-none"
+          className="money w-full rounded-lg border border-border bg-bg px-2.5 py-1.5 text-sm text-text focus:border-accent focus:outline-none"
         />
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { PartyPopper } from 'lucide-react'
 import { useBalance } from '../balance/useBalance'
 import { useProfiles } from '../auth/useProfiles'
 import { formatMoney } from '../../lib/format'
@@ -19,11 +20,13 @@ export function BalanceCard() {
     >
       <p className="text-xs text-text-muted">Balance</p>
       {settled ? (
-        <p className="mt-1 text-lg font-semibold text-text">All settled up 🎉</p>
+        <p className="mt-1 flex items-center gap-1.5 text-lg font-semibold text-text">
+          <PartyPopper size={18} className="text-accent" /> All settled up
+        </p>
       ) : (
         <p className="mt-1 text-lg font-semibold text-text">
           {owesMe ? `${profiles.partner.display_name} owes you` : `You owe ${profiles.partner.display_name}`}{' '}
-          <span className={owesMe ? 'text-accent' : 'text-danger'}>{formatMoney(Math.abs(balance.meNet))}</span>
+          <span className={`money ${owesMe ? 'text-accent' : 'text-danger'}`}>{formatMoney(Math.abs(balance.meNet))}</span>
         </p>
       )}
     </Link>

@@ -211,7 +211,7 @@ export function ReceiptReviewPage() {
               >
                 <option value="">Uncategorized</option>
                 {categories?.map((c) => (
-                  <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+                  <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
 
@@ -228,7 +228,7 @@ export function ReceiptReviewPage() {
       </div>
 
       <div className={`rounded-xl border p-3 text-sm ${mismatch ? 'border-danger/50 bg-danger/10 text-danger' : 'border-border bg-surface text-text-muted'}`}>
-        Items total {formatMoney(sumOfItems)} · Receipt total {formatMoney(aiTotal)}
+        Items total <span className="money">{formatMoney(sumOfItems)}</span> · Receipt total <span className="money">{formatMoney(aiTotal)}</span>
         {mismatch && ' — double check the amounts above'}
       </div>
 

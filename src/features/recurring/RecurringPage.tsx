@@ -15,6 +15,7 @@ import { useAccounts } from '../accounts/useAccounts'
 import { useProfiles } from '../auth/useProfiles'
 import { Modal } from '../../components/Modal'
 import { formatMoney } from '../../lib/format'
+import { CategoryIcon } from '../../lib/categoryIcons'
 import type { RecurringFrequency } from '../../types/database.types'
 
 const FREQUENCIES: RecurringFrequency[] = ['weekly', 'monthly', 'yearly']
@@ -63,10 +64,10 @@ export function RecurringPage() {
           <div key={r.id} className="flex items-center gap-3 p-3">
             <button onClick={() => setEditing(r)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
               <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base"
-                style={{ background: `${r.category?.color ?? '#93a1b0'}25` }}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                style={{ background: `${r.category?.color ?? '#9891a3'}25`, color: r.category?.color ?? '#9891a3' }}
               >
-                {r.category?.icon ?? '🔁'}
+                <CategoryIcon name={r.category?.icon ?? 'package'} />
               </span>
               <span className="min-w-0">
                 <span className="block truncate text-sm font-medium text-text">{r.description}</span>
@@ -75,7 +76,7 @@ export function RecurringPage() {
                 </span>
               </span>
             </button>
-            <span className="shrink-0 text-sm font-medium text-text">{formatMoney(r.amount)}</span>
+            <span className="money shrink-0 text-sm font-semibold text-text">{formatMoney(r.amount)}</span>
             <button
               onClick={() => toggleRecurring.mutate({ id: r.id, is_active: !r.is_active })}
               className={`h-5 w-9 shrink-0 rounded-full transition ${r.is_active ? 'bg-accent' : 'bg-border'}`}
@@ -189,7 +190,7 @@ function RecurringEditor({
         >
           <option value="">No category</option>
           {categories.map((c) => (
-            <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+            <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
         <select

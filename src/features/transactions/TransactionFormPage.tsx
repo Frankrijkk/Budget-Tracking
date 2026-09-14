@@ -7,6 +7,7 @@ import { useProfiles } from '../auth/useProfiles'
 import { useTransaction, useSaveTransaction, useDeleteTransaction } from './useTransactions'
 import { SplitEditor } from './SplitEditor'
 import { DEFAULT_SPLIT, resolveSplit, splitFromShares, type SplitValue } from './split'
+import { CategoryIcon } from '../../lib/categoryIcons'
 
 export function TransactionFormPage() {
   const { id } = useParams()
@@ -121,7 +122,7 @@ export function TransactionFormPage() {
           placeholder="0.00"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-2xl font-semibold text-text focus:border-accent focus:outline-none"
+          className="money w-full rounded-xl border border-border bg-surface px-4 py-3 text-2xl font-semibold text-text focus:border-accent focus:outline-none"
         />
       </div>
 
@@ -170,11 +171,11 @@ export function TransactionFormPage() {
               key={c.id}
               type="button"
               onClick={() => setCategoryId(c.id)}
-              className={`rounded-full border px-3 py-1.5 text-sm ${
+              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm ${
                 categoryId === c.id ? 'border-accent bg-accent/15 text-accent' : 'border-border text-text-muted'
               }`}
             >
-              {c.icon} {c.name}
+              <CategoryIcon name={c.icon} size={14} /> {c.name}
             </button>
           ))}
         </div>

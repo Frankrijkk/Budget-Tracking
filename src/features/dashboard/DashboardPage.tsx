@@ -23,11 +23,11 @@ export function DashboardPage() {
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-2xl border border-border bg-surface p-4">
           <p className="text-xs text-text-muted">Household</p>
-          <p className="mt-1 text-xl font-semibold text-text">{formatMoney(summary?.household ?? 0)}</p>
+          <p className="money mt-1 text-xl font-semibold text-text">{formatMoney(summary?.household ?? 0)}</p>
         </div>
         <div className="rounded-2xl border border-border bg-surface p-4">
           <p className="text-xs text-text-muted">Your share</p>
-          <p className="mt-1 text-xl font-semibold text-text">{formatMoney(summary?.mine ?? 0)}</p>
+          <p className="money mt-1 text-xl font-semibold text-text">{formatMoney(summary?.mine ?? 0)}</p>
         </div>
       </div>
 

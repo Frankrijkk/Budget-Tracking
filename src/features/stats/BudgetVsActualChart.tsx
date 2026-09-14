@@ -3,6 +3,7 @@ import { useCategorySpend } from '../budgets/useBudgetProgress'
 import { useBudgets } from '../budgets/useBudgets'
 import { ProgressBar } from '../../components/ProgressBar'
 import { formatMoney } from '../../lib/format'
+import { CategoryIcon } from '../../lib/categoryIcons'
 
 export function BudgetVsActualChart() {
   const { data: categories } = useCategories()
@@ -25,8 +26,10 @@ export function BudgetVsActualChart() {
         return (
           <div key={b.id}>
             <div className="mb-1 flex items-center justify-between text-sm">
-              <span className="text-text">{category.icon} {category.name}</span>
-              <span className={ratio > 1 ? 'text-danger' : 'text-text-muted'}>
+              <span className="flex items-center gap-1.5 text-text">
+                <CategoryIcon name={category.icon} size={15} /> {category.name}
+              </span>
+              <span className={`money ${ratio > 1 ? 'text-danger' : 'text-text-muted'}`}>
                 {formatMoney(spent)} / {formatMoney(b.amount)}
               </span>
             </div>

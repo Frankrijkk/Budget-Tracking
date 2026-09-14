@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTransactions } from './useTransactions'
 import { useCategories } from '../categories/useCategories'
 import { formatMoney } from '../../lib/format'
+import { CategoryIcon } from '../../lib/categoryIcons'
 import { format, parseISO } from 'date-fns'
 
 export function TransactionListPage() {
@@ -37,11 +38,11 @@ export function TransactionListPage() {
           <button
             key={c.id}
             onClick={() => setCategoryId(c.id)}
-            className={`shrink-0 rounded-full border px-3 py-1 text-sm ${
+            className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 text-sm ${
               categoryId === c.id ? 'border-accent bg-accent/15 text-accent' : 'border-border text-text-muted'
             }`}
           >
-            {c.icon} {c.name}
+            <CategoryIcon name={c.icon} size={14} /> {c.name}
           </button>
         ))}
       </div>
@@ -65,10 +66,10 @@ export function TransactionListPage() {
                   className="flex items-center gap-3 p-3 active:bg-surface-raised"
                 >
                   <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-base"
-                    style={{ background: `${t.category?.color ?? '#93a1b0'}25` }}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                    style={{ background: `${t.category?.color ?? '#9891a3'}25`, color: t.category?.color ?? '#9891a3' }}
                   >
-                    {t.category?.icon ?? '📦'}
+                    <CategoryIcon name={t.category?.icon ?? 'package'} />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium text-text">
@@ -78,7 +79,7 @@ export function TransactionListPage() {
                       {t.payer.display_name} paid · {t.category?.name ?? 'Uncategorized'}
                     </span>
                   </span>
-                  <span className="shrink-0 font-medium text-text">{formatMoney(t.amount, t.currency)}</span>
+                  <span className="money shrink-0 font-semibold text-text">{formatMoney(t.amount, t.currency)}</span>
                 </Link>
               ))}
             </div>

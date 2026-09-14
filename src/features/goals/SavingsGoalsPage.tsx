@@ -12,8 +12,7 @@ import { useProfiles } from '../auth/useProfiles'
 import { Modal } from '../../components/Modal'
 import { ProgressBar } from '../../components/ProgressBar'
 import { formatMoney } from '../../lib/format'
-
-const EMOJI_OPTIONS = ['🏖️', '🏠', '🚗', '💍', '👶', '🎓', '🛡️', '🎁']
+import { CategoryIcon, GOAL_ICON_OPTIONS } from '../../lib/categoryIcons'
 
 export function SavingsGoalsPage() {
   const navigate = useNavigate()
@@ -50,14 +49,19 @@ export function SavingsGoalsPage() {
             <div key={g.id} className="rounded-2xl border border-border bg-surface p-4">
               <div className="mb-2 flex items-center justify-between">
                 <button onClick={() => setEditing(g)} className="flex items-center gap-2 text-left">
-                  <span className="text-xl">{g.icon}</span>
+                  <span
+                    className="flex h-8 w-8 items-center justify-center rounded-full"
+                    style={{ background: `${g.color ?? '#b8a1ff'}25`, color: g.color ?? '#b8a1ff' }}
+                  >
+                    <CategoryIcon name={g.icon ?? 'gift'} size={16} />
+                  </span>
                   <span className="font-medium text-text">{g.name}</span>
                 </button>
-                {g.is_achieved && <span className="text-xs text-accent">Achieved 🎉</span>}
+                {g.is_achieved && <span className="text-xs text-accent">Achieved</span>}
               </div>
               <ProgressBar ratio={ratio} color={g.color ?? undefined} />
               <div className="mt-1.5 flex items-center justify-between text-xs text-text-muted">
-                <span>{formatMoney(g.current_amount)} / {formatMoney(g.target_amount)}</span>
+                <span className="money">{formatMoney(g.current_amount)} / {formatMoney(g.target_amount)}</span>
                 {g.target_date && <span>by {g.target_date}</span>}
               </div>
               <button
@@ -115,7 +119,7 @@ function GoalEditor({
   const isNew = goal === 'new'
   const existing = isNew ? null : goal
   const [name, setName] = useState(existing?.name ?? '')
-  const [icon, setIcon] = useState(existing?.icon ?? EMOJI_OPTIONS[0])
+  const [icon, setIcon] = useState(existing?.icon ?? GOAL_ICON_OPTIONS[0])
   const [target, setTarget] = useState(existing?.target_amount?.toString() ?? '')
   const [targetDate, setTargetDate] = useState(existing?.target_date ?? '')
 
@@ -132,15 +136,15 @@ function GoalEditor({
           className="w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-text focus:border-accent focus:outline-none"
         />
         <div className="flex flex-wrap gap-2">
-          {EMOJI_OPTIONS.map((e) => (
+          {GOAL_ICON_OPTIONS.map((name) => (
             <button
-              key={e}
-              onClick={() => setIcon(e)}
-              className={`flex h-10 w-10 items-center justify-center rounded-full border text-lg ${
-                icon === e ? 'border-accent bg-accent/15' : 'border-border'
+              key={name}
+              onClick={() => setIcon(name)}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border ${
+                icon === name ? 'border-accent bg-accent/15 text-accent' : 'border-border text-text-muted'
               }`}
             >
-              {e}
+              <CategoryIcon name={name} />
             </button>
           ))}
         </div>
